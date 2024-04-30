@@ -29,8 +29,8 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses")
   List<StudentsCourses> searchStudentsCourses();
 
-  @Select("SELECT studentId FROM students")
-  String[] checkStudentId();
+  @Select("SELECT * FROM students where studentId = #{studentId}")
+  Student selectStudent(Student student);
 
 // INSERT文の書き方注意
   @Insert("INSERT INTO students (name, kana, nickname, mail, area, age, sex, remark, is_deleted)"
@@ -43,4 +43,6 @@ public interface StudentRepository {
       + " VALUE(#{studentId}, #{courseName}, #{startingDate}, #{scheduledEndDate})")
   @Options(useGeneratedKeys = true,keyProperty = "courseId")
   void registerStudentCourses(StudentsCourses studentsCourse);
+
+
 }

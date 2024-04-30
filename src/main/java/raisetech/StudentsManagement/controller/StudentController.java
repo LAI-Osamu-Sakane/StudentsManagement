@@ -67,4 +67,12 @@ public class StudentController {
 
     return "redirect:/studentList";
   }
+
+  @GetMapping
+
+
+  @GetMapping("/updaterStudent")
+  public String updaterStudent() {
+
+  }
 }
