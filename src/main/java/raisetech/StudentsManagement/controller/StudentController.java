@@ -2,6 +2,7 @@ package raisetech.StudentsManagement.controller;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,10 @@ public class StudentController {
 
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
-    model.addAttribute("studentDetail", new StudentDetail());
+    //ブラウザで受講コース名を表示するためにデータが空でいいので作成されている必要がある
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudentsCourses(Arrays.asList(new StudentsCourses()));
+    model.addAttribute("studentDetail", studentDetail);
     return "registerStudent";
   }
 
@@ -59,7 +63,7 @@ public class StudentController {
     //新規受講生登録処理を実装する
     //コース情報も登録できるように実装する（単体でよい)
     service.registerStudent(studentDetail);
-    System.out.println(studentDetail.getStudent().getName() + "さんが受講生として登録されました");
+
 
     return "redirect:/studentList";
   }

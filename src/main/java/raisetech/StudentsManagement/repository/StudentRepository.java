@@ -32,13 +32,15 @@ public interface StudentRepository {
   @Select("SELECT studentId FROM students")
   String[] checkStudentId();
 
-//  @Insert("INSERT INTO students VALUE(student.studentId student.name, student.kana, student.nickname, student.mail, student.area, student.age, student.sex, student.remark, null )")
-
+// INSERT文の書き方注意
   @Insert("INSERT INTO students (name, kana, nickname, mail, area, age, sex, remark, is_deleted)"
       + " VALUE(#{name}, #{kana}, #{nickname}, #{mail}, #{area}, #{age}, #{sex}, #{remark}, false)")
+  //MyBatis用の設定、studentIdについて
   @Options(useGeneratedKeys = true,keyProperty = "studentId")
   void registerStudent(Student student);
-//  void insertData(@Param("studentId") String studentId, @Param("name") String name,
-//      @Param("kana") String kana, @Param("nickname") String nickname, @Param("mail") String mail, @Param("area") String area,
-//      @Param("age") int age, @Param("sex") String sex, @Param("remark") String remark, @Param("isDelete") boolean isDelete);
+
+  @Insert("INSERT INTO students_courses (studentId, course_name, starting_date, scheduled_end_date)"
+      + " VALUE(#{studentId}, #{courseName}, #{startingDate}, #{scheduledEndDate})")
+  @Options(useGeneratedKeys = true,keyProperty = "courseId")
+  void registerStudentCourses(StudentsCourses studentsCourse);
 }
