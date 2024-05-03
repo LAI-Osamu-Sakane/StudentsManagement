@@ -25,29 +25,41 @@ public class StudentService {
     return repository.search();
   }
 
-  public List<StudentsCourses> searchStudentsCourseList() {
-    return repository.searchStudentsCourses();
+  public StudentDetail searchStudent(String studentId) {
+    Student student = repository.searchStudent(studentId);
+    List<StudentsCourses> studentsCourses = repository.searchStudentCourse(student.getStudentId());
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudent(student);
+    studentDetail.setStudentsCourses(studentsCourses);
+    return studentDetail;
   }
 
-  public String[] checkStudentId() {
-    return repository.checkStudentId();
+  public List<StudentsCourses> searchStudentsCourseList() {
+    return repository.searchStudentsCoursesList();
   }
 
 //  一連の登録情報がうまくいったときのみ有効とするためのTransactional
   @Transactional
   public void registerStudent(StudentDetail studentDetail) {
-//    student.setStudentId((String)((int)repository.checkStudentId() + 1));
+
     repository.registerStudent(studentDetail.getStudent());
     //todo:コース情報の登録
     for(StudentsCourses studentCourse : studentDetail.getStudentsCourses()) {
       studentCourse.setStudentId(studentDetail.getStudent().getStudentId());
       studentCourse.setStartingDate(LocalDateTime.now());
       studentCourse.setScheduledEndDate(LocalDateTime.now().plusYears(1));
-      repository.registerStudentCourses(studentCourse);
+
     }
-//    repository.insertData(student.getStudentId(), student.getName(), student.getKana(),
-//        student.getNickname(), student.getMail(), student.getArea(), student.getAge(), student.getSex(), student.getRemark(), false);
   }
 
+  @Transactional
+  public void updateStudent(StudentDetail studentDetail) {
+    repository.updateStudent(studentDetail.getStudent());
+    for(StudentsCourses studentCourse : studentDetail.getStudentsCourses()) {
+      studentCourse.setStudentId(studentDetail.getStudent().getStudentId());
+      repository.updateStudentCourses(studentCourse);
+    }
+
+  }
 
 }

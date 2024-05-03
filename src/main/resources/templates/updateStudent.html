@@ -2,11 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>受講生情報更新</title>
+  <title>受講生詳細</title>
 </head>
 <body>
-<h1>受講生情報更新</h1>
-<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
+<h1>受講生詳細</h1>
+<form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
+  <div>
+    <label for="studentId">ID：</label>
+    <input type="text" id="studentId" th:field="*{student.studentId}" required /><br />
+  </div>
   <div>
     <label for="name">名前：</label>
     <input type="text" id="name" th:field="*{student.name}" required /><br />
@@ -40,11 +44,13 @@
     <input type="text" id="remark" th:field="*{student.remark}" /><br />
   </div>
   <div th:each="course, stat : *{studentsCourses}">
+    <label for="courseId">受講コースID：</label>
+    <input type="text" id="courseId" th:id="studentCourse.__${stat.index}__.courseId" th:field="*{studentsCourses[__${stat.index}__].courseId}" /><br />
     <label for="courseName" th:for="studentCourse.__${stat.index}__.courseName">受講コース名：</label>
     <input type="text" id="courseName" th:id="studentCourse.__${stat.index}__.courseName" th:field="*{studentsCourses[__${stat.index}__].courseName}" />
   </div>
   <div>
-    <button type="submit">登録</button>
+    <button type="submit">更新</button>
   </div>
 </form>
 </body>
