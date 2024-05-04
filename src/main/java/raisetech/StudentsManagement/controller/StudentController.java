@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentsManagement.controller.converter.StudentConverter;
 import raisetech.StudentsManagement.data.Student;
@@ -20,7 +22,7 @@ import raisetech.StudentsManagement.data.StudentsCourses;
 import raisetech.StudentsManagement.domain.StudentDetail;
 import raisetech.StudentsManagement.service.StudentService;
 
-@Controller
+@RestController
 public class StudentController {
 
   private StudentService service;
@@ -33,21 +35,11 @@ public class StudentController {
   }
 
   @GetMapping("/studentList")
-  public String getStudentList(Model model) {
+  public List<StudentDetail> getStudentList() {
     List<Student> students = service.searchStudentList();
     List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
 
-    model.addAttribute("studentList", converter.convertStudentDetails(students, studentsCourses));
-    return "studentList";
-  }
-
-  @GetMapping("/student/{studentId}")
-  public String getStudent(@PathVariable String studentId, Model model) {
-
-    StudentDetail studentDetail = service.searchStudent(studentId);
-//    studentDetail.setStudentsCourses(Arrays.asList(new StudentsCourses()));
-    model.addAttribute("studentDetail", studentDetail);
-    return "updateStudent";
+    return converter.convertStudentDetails(students, studentsCourses);
   }
 
   @GetMapping("/newStudent")
@@ -69,20 +61,13 @@ public class StudentController {
     //コース情報も登録できるように実装する（単体でよい)
     service.registerStudent(studentDetail);
 
-
     return "redirect:/studentList";
   }
 
-
-
   @PostMapping("/updateStudent")
-  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
-    if(result.hasErrors()) {
-      return "updateStudent";
-    }
+  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
 
     service.updateStudent(studentDetail);
-
-    return "redirect:/studentList";
+    return ResponseEntity.ok("更新処理が成功しました");
   }
 }
