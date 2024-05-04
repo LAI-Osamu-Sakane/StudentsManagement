@@ -49,7 +49,7 @@ public interface StudentRepository {
 
   // INSERT文の書き方注意
   @Update("UPDATE students Set name = #{name}, kana = #{kana}, nickname = #{nickname},"
-      + " mail = #{mail}, area = #{area}, age = #{age}, sex = #{sex}, remark = #{remark}, is_deleted = #{is_deleted} WHERE studentId = #{studentId}")
+      + " mail = #{mail}, area = #{area}, age = #{age}, sex = #{sex}, remark = #{remark}, is_deleted = #{deleted} WHERE studentId = #{studentId}")
   //MyBatis用の設定、studentIdについて
   void updateStudent(Student student);
 
