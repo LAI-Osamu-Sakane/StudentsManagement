@@ -22,46 +22,52 @@ import raisetech.StudentsManagement.data.StudentsCourses;
 import raisetech.StudentsManagement.domain.StudentDetail;
 import raisetech.StudentsManagement.service.StudentService;
 
+/**
+ * 受講生の検索や登録、更新などを行うREST APIとして受け付けるControllerです。
+ */
 @RestController
 public class StudentController {
 
   private StudentService service;
-  private StudentConverter converter;
 
+
+  /**
+   * コンストラクタ
+   * @param service　受講生サービス
+   */
   @Autowired
-  public StudentController(StudentService service, StudentConverter converter) {
+  public StudentController(StudentService service) {
     this.service = service;
-    this.converter = converter;
   }
 
+  /**
+   * 受講生一覧検索です。
+   * 全件検索を行うので、受験指定は行いません。
+   *
+   * @return 受講生一覧（全件）
+   */
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
-    List<Student> students = service.searchStudentList();
-    List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
-
-    return converter.convertStudentDetails(students, studentsCourses);
+    return service.searchStudentList();
   }
 
-  @GetMapping("/newStudent")
-  public String newStudent(Model model) {
-    //ブラウザで受講コース名を表示するためにデータが空でいいので作成されている必要がある
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudentsCourses(Arrays.asList(new StudentsCourses()));
-    model.addAttribute("studentDetail", studentDetail);
-    return "registerStudent";
+  /**
+   * 受講生検索です。
+   * IDに紐づく任意の受講生情報を取得します。
+   *
+   * @param studentId　受講生ID
+   * @return 受講生
+   */
+  @GetMapping("/student/{studentId}")
+  public StudentDetail getStudent(@PathVariable String studentId) {
+    return service.searchStudent(studentId);
   }
 
   @PostMapping("/registerStudent")
-  public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
-    if(result.hasErrors()) {
-      return "registerStudent";
-    }
+  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
 
-    //新規受講生登録処理を実装する
-    //コース情報も登録できるように実装する（単体でよい)
-    service.registerStudent(studentDetail);
-
-    return "redirect:/studentList";
+    StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
+    return ResponseEntity.ok(responseStudentDetail);
   }
 
   @PostMapping("/updateStudent")
